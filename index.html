@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PassionCast — AI World Cup Hype Generator</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Hero Section -->
+    <header class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">
+          <span class="fire-emoji">🔥</span>
+          PassionCast
+          <span class="fire-emoji">🔥</span>
+        </h1>
+        <p class="hero-subtitle">Your AI-powered hype man for the World Cup 2026</p>
+        <p class="hero-desc">Choose your team. Pick a moment. Get a passionate, AI-generated audio commentary that captures the fire, the rivalry, and the glory.</p>
+      </div>
+    </header>
+
+    <!-- Main App -->
+    <main class="main-container">
+      <!-- Step 1: Team Selection -->
+      <section class="step-section" id="step-team">
+        <div class="step-header">
+          <span class="step-number">1</span>
+          <h2>Choose Your Team</h2>
+        </div>
+        <div class="team-grid" id="team-grid">
+          <!-- Teams populated by JS -->
+        </div>
+      </section>
+
+      <!-- Step 2: Passion Mode -->
+      <section class="step-section hidden" id="step-mode">
+        <div class="step-header">
+          <span class="step-number">2</span>
+          <h2>What's Your Passion?</h2>
+        </div>
+        <div class="mode-grid">
+          <button class="mode-card" data-mode="hype">
+            <span class="mode-icon">⚡</span>
+            <span class="mode-title">Pre-Match Hype</span>
+            <span class="mode-desc">A rally cry before the big game</span>
+          </button>
+          <button class="mode-card" data-mode="glory">
+            <span class="mode-icon">🏆</span>
+            <span class="mode-title">Glory Moment</span>
+            <span class="mode-desc">Relive an iconic winning moment</span>
+          </button>
+          <button class="mode-card" data-mode="rivalry">
+            <span class="mode-icon">⚔️</span>
+            <span class="mode-title">Rivalry Fire</span>
+            <span class="mode-desc">Stoke the flames of a classic rivalry</span>
+          </button>
+          <button class="mode-card" data-mode="heartbreak">
+            <span class="mode-icon">💔</span>
+            <span class="mode-title">Beautiful Heartbreak</span>
+            <span class="mode-desc">The passion in a painful loss</span>
+          </button>
+          <button class="mode-card" data-mode="anthem">
+            <span class="mode-icon">🎵</span>
+            <span class="mode-title">Fan Anthem</span>
+            <span class="mode-desc">A chant-style spoken word piece</span>
+          </button>
+          <button class="mode-card" data-mode="custom">
+            <span class="mode-icon">✍️</span>
+            <span class="mode-title">Custom Moment</span>
+            <span class="mode-desc">Describe your own passionate scene</span>
+          </button>
+        </div>
+        <div class="custom-input hidden" id="custom-input">
+          <textarea id="custom-prompt" placeholder="Describe the moment... e.g., 'The 90th minute equalizer against our biggest rival in the quarter-finals'" rows="3"></textarea>
+        </div>
+      </section>
+
+      <!-- Step 3: Voice Style -->
+      <section class="step-section hidden" id="step-voice">
+        <div class="step-header">
+          <span class="step-number">3</span>
+          <h2>Choose Your Commentator Voice</h2>
+        </div>
+        <div class="voice-grid">
+          <button class="voice-card" data-voice="dramatic">
+            <span class="voice-icon">🎙️</span>
+            <span class="voice-title">Epic Narrator</span>
+            <span class="voice-desc">Deep, cinematic, movie-trailer energy</span>
+          </button>
+          <button class="voice-card" data-voice="energetic">
+            <span class="voice-icon">📢</span>
+            <span class="voice-title">Match Commentator</span>
+            <span class="voice-desc">High-energy, fast-paced, in-the-moment</span>
+          </button>
+          <button class="voice-card" data-voice="poetic">
+            <span class="voice-icon">📖</span>
+            <span class="voice-title">Poetic Storyteller</span>
+            <span class="voice-desc">Lyrical, emotional, soul-stirring</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Generate Button -->
+      <section class="step-section hidden" id="step-generate">
+        <button class="generate-btn" id="generate-btn">
+          <span class="btn-text">Generate My PassionCast</span>
+          <span class="btn-icon">🔥</span>
+        </button>
+      </section>
+
+      <!-- Loading State -->
+      <section class="step-section hidden" id="step-loading">
+        <div class="loading-container">
+          <div class="loading-spinner"></div>
+          <p class="loading-text" id="loading-text">Channeling the passion...</p>
+          <div class="loading-steps">
+            <div class="loading-step" id="ls-script">
+              <span class="ls-icon">✍️</span>
+              <span class="ls-text">Generating passionate script with Gemini AI...</span>
+            </div>
+            <div class="loading-step" id="ls-voice">
+              <span class="ls-icon">🎙️</span>
+              <span class="ls-text">Bringing it to life with ElevenLabs voice...</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Result -->
+      <section class="step-section hidden" id="step-result">
+        <div class="result-container">
+          <div class="result-header">
+            <h2>🔥 Your PassionCast is Ready!</h2>
+          </div>
+          <div class="result-team" id="result-team-badge"></div>
+          <div class="script-container">
+            <h3>📝 The Script</h3>
+            <p class="script-text" id="script-text"></p>
+          </div>
+          <div class="audio-container">
+            <h3>🎧 Listen</h3>
+            <audio id="audio-player" controls></audio>
+            <button class="download-btn" id="download-btn">⬇️ Download Audio</button>
+          </div>
+          <div class="result-actions">
+            <button class="action-btn" id="regenerate-btn">🔄 New Generation</button>
+            <button class="action-btn" id="start-over-btn">🏠 Start Over</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Error State -->
+      <section class="step-section hidden" id="step-error">
+        <div class="error-container">
+          <h2>😔 Something went wrong</h2>
+          <p class="error-text" id="error-text"></p>
+          <button class="action-btn" id="retry-btn">🔄 Try Again</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Built with ❤️ using <strong>Google AI (Gemini)</strong> for script generation & <strong>ElevenLabs</strong> for voice synthesis</p>
+      <p class="footer-sub">DEV Weekend Challenge: Passion Edition 🏆</p>
+    </footer>
+
+    <!-- API Key Modal -->
+    <div class="modal hidden" id="api-modal">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <h2>🔑 API Keys Required</h2>
+        <p>PassionCast uses Google AI and ElevenLabs APIs. Your keys stay in your browser — nothing is sent to any server except the official APIs.</p>
+        <div class="input-group">
+          <label for="gemini-key">Google AI (Gemini) API Key</label>
+          <input type="password" id="gemini-key" placeholder="AIza..." />
+          <a href="https://aistudio.google.com/apikey" target="_blank" class="key-link">Get free key →</a>
+        </div>
+        <div class="input-group">
+          <label for="elevenlabs-key">ElevenLabs API Key</label>
+          <input type="password" id="elevenlabs-key" placeholder="sk_..." />
+          <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" class="key-link">Get free key →</a>
+        </div>
+        <button class="generate-btn" id="save-keys-btn">
+          <span class="btn-text">Save & Continue</span>
+        </button>
+        <p class="modal-note">Keys are stored in localStorage. Both services have free tiers.</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
