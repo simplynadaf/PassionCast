@@ -1,5 +1,5 @@
 ---
-title: PassionCast — I Built an AI Hype Man for World Cup Fans Using Gemini + ElevenLabs
+title: "PassionCast: I Built an AI Hype Man for World Cup Fans Using Gemini + ElevenLabs"
 published: false
 tags: devchallenge, weekendchallenge
 ---
@@ -8,56 +8,62 @@ tags: devchallenge, weekendchallenge
 
 ## What I Built
 
-**PassionCast** turns World Cup passion into personalized, AI-generated audio commentary.
+The World Cup quarter-finals are on right now. I'm watching matches, yelling at my screen, and I thought: what if I could bottle that feeling into an audio clip?
 
-Pick your team. Choose a passion mode — pre-match hype, glory moment, rivalry fire, beautiful heartbreak, or fan anthem. Select a voice style. Hit generate. In seconds, you get a passionate, emotionally-charged audio clip that sounds like a professional commentator losing their mind over YOUR team.
+**PassionCast** lets you pick your team, choose a passion mode (hype speech, glory moment, rivalry fire, heartbreak, fan anthem, or custom), and generates a 60-second AI commentary clip. Not the generic "your team is amazing" stuff. Actual references to your team's players, history, and rivals.
 
-The World Cup quarter-finals are happening right now. Passion is everywhere. I wanted to build something that captures that raw, irrational, beautiful fire that football fans feel — and turn it into something you can actually listen to and share.
-
-**The idea:** What if every fan had their own personal hype man? Someone who knows your team's history, your legends, your rivals — and can turn that into a 60-second piece of audio art on demand?
+Pick India, select "Rivalry Fire," hit generate. You get a breathless commentator talking about the India-Pakistan cricket-meets-football tension, with real names and real context. Try Argentina and you get Maradona, La Albiceleste, the Diego legacy. That's what I was going for.
 
 ## Demo
 
-<!-- REPLACE THIS with your deployed Vercel/Netlify/Cloudflare Pages link -->
-👉 **[Try PassionCast Live](YOUR_DEPLOYED_URL)**
+{% embed https://youtu.be/A_qoRuVKNPk?si=0SV_vfNw1CFk8xRN %}
 
-**How it works in 15 seconds:**
+👉 **[Try PassionCast Live](https://simplynadaf.github.io/PassionCast/)**
 
-1. Choose Argentina 🇦🇷
-2. Select "Rivalry Fire" ⚔️
-3. Pick "Match Commentator" voice 📢
-4. Hit Generate 🔥
-5. Get a passionate audio clip about the Argentina-Brazil rivalry, narrated like a live World Cup match
+Three pre-generated sample clips are on the page. Hit play, no keys needed. You'll hear:
+- Argentina rivalry fire (Match Commentator voice)
+- India pre-match hype (Epic Narrator voice)  
+- England heartbreak (Epic Narrator voice)
 
-<!-- REPLACE with a screen recording or GIF -->
-![PassionCast Demo](YOUR_DEMO_GIF_OR_VIDEO_URL)
+To generate your own, you'll need free API keys (30 seconds each):
+- [Google AI Studio key](https://aistudio.google.com/apikey)
+- [ElevenLabs key](https://elevenlabs.io/app/settings/api-keys)
+
+**The flow:**
+
+![Landing with sample clips you can play immediately](https://raw.githubusercontent.com/simplynadaf/PassionCast/main/screenshots/01-landing.png)
+
+![48 teams to choose from](https://raw.githubusercontent.com/simplynadaf/PassionCast/main/screenshots/02-team-grid.png)
+
+![Six passion modes](https://raw.githubusercontent.com/simplynadaf/PassionCast/main/screenshots/03-passion-modes.png)
+
+![Ready to generate](https://raw.githubusercontent.com/simplynadaf/PassionCast/main/screenshots/04-ready-to-generate.png)
 
 ## Code
 
-{% github YOUR_USERNAME/passioncast %}
+{% github simplynadaf/PassionCast %}
 
 ## How I Built It
 
-### Architecture (Deliberately Simple)
+No backend. No framework. One page, vanilla JS, two API calls. Vite for bundling, GitHub Pages for hosting.
 
 ```
-Browser → Gemini API (script generation) → ElevenLabs API (voice synthesis) → Audio playback
+Browser → Gemini 2.0 Flash (writes script) → ElevenLabs (speaks it) → Audio playback
 ```
 
-No backend. No database. No framework. Just vanilla JS, two API calls, and a single `index.html`. I wanted the entire thing to be deployable to any static host in seconds.
+I specifically didn't want a backend here. The whole point is that someone can fork this, drop in their own keys, and have it running in 30 seconds.
 
-### Google AI (Gemini 2.0 Flash)
+### The Gemini Part (where I spent most of my time)
 
-Gemini generates the passionate scripts. The prompt engineering was the fun part — I needed the AI to:
+Getting Gemini to write *passionate* content was harder than I expected. At temperature 0.7, everything came out bland. "Your team has a proud history. The fans are excited." Useless.
 
-- Know real players, real rivalries, real football culture for 48 nations
-- Write in distinctly different styles (cinematic narrator vs. breathless commentator vs. poetic storyteller)
-- Keep scripts to ~150-200 words (the sweet spot for 45-60 second audio)
-- Actually sound passionate, not generic
+At **0.9**, things got interesting. Combined with a detailed system prompt that includes the team name, their rivals, their football culture, and the specific style I want (narrator vs commentator vs poet), the output started feeling real.
 
-The key insight: high temperature (0.9) + specific cultural context in the prompt = scripts that feel genuinely personal to each team's fanbase.
+The trick was constraining length. I needed 150-200 words, the sweet spot for 45-60 seconds of audio. Too short and it feels empty. Too long and ElevenLabs starts rushing or the clip drags.
 
 ```javascript
+// Note: ${apiKey} is a template literal variable, not a real key. 
+// Users provide their own free key from aistudio.google.com/apikey
 const response = await fetch(
   `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
   {
@@ -71,58 +77,50 @@ const response = await fetch(
 );
 ```
 
-### ElevenLabs
+### The ElevenLabs Part (where the magic happens)
 
-ElevenLabs brings the script to life. I use the Multilingual v2 model with tuned voice settings:
+I tested default voice settings first. Sounded flat. Like a GPS reading football commentary.
 
-- **Low stability (0.4)** — more emotional variation, feels less robotic
-- **High similarity boost (0.8)** — stays close to the chosen voice character
-- **Style cranked up (0.6)** — more expressive delivery
+The fix: crank down **stability to 0.4** (default is higher). This adds emotional variation. The voice wavers, speeds up, gets louder on key phrases. Exactly what you want for sports commentary.
 
-Different passion modes pair with different voices. The "Epic Narrator" voice with a glory moment script sounds genuinely cinematic. The "Match Commentator" with rivalry fire mode sounds like actual World Cup coverage.
+Then **style to 0.6** for extra expressiveness, and **speaker boost on** for clarity.
+
+Three voices, matched to content:
+- **Brian** (dramatic narrator) for glory moments
+- **Liam** (energetic) for rivalry and hype
+- **George** (poetic storyteller) for heartbreak and anthems
 
 ```javascript
-const response = await fetch(
-  `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
-  {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'xi-api-key': apiKey,
-    },
-    body: JSON.stringify({
-      text: script,
-      model_id: 'eleven_multilingual_v2',
-      voice_settings: {
-        stability: 0.4,
-        similarity_boost: 0.8,
-        style: 0.6,
-        use_speaker_boost: true,
-      }
-    })
+body: JSON.stringify({
+  text: script,
+  model_id: 'eleven_multilingual_v2',
+  voice_settings: {
+    stability: 0.4,
+    similarity_boost: 0.8,
+    style: 0.6,
+    use_speaker_boost: true,
   }
-);
+})
 ```
 
-### Design Choices
+### Other Decisions
 
-- **Dark theme with fire/gold accents** — matches the intensity of the subject
-- **Step-by-step flow** — each choice builds anticipation toward the generate button
-- **Client-side API keys** — stored in localStorage, never sent anywhere except official APIs
-- **No signup, no backend** — zero friction between "I want to try this" and hearing your result
+I used flag images from flagcdn.com instead of emoji because emoji flags don't render on Windows for England, Wales, and Scotland (they show as black rectangles). Learned that the hard way after building the whole grid with emoji first.
 
-### What I'd Add With More Time
+Dark theme with gold/fire accents because... it's a passion app. Light mode would feel wrong.
 
-- Share clips directly to social media
-- Multiple language support (Gemini can write in Spanish, Portuguese, French...)
-- "Match day mode" that auto-generates hype for today's actual fixtures
-- A gallery of community-generated PassionCasts
+### What I'd Add
+
+If I had another weekend: social sharing (let people post their clips), match-day mode that checks today's fixtures and auto-suggests hype content, and a gallery so you can hear what other fans generated. PRs welcome if you want to tackle any of these.
+
+---
 
 ## Prize Categories
 
-- **Best Use of Google AI** — Gemini 2.0 Flash generates culturally-aware, team-specific passionate commentary scripts with distinct style variations
-- **Best Use of ElevenLabs** — Multilingual v2 model with fine-tuned voice settings (low stability for emotion, high style for expressiveness) converts scripts into dramatic audio
+- **Best Use of Google AI**: Gemini 2.0 Flash with temperature 0.9 and detailed cultural prompting. Produces scripts with real player names, real rivalry history, and team-specific fan culture for 48 nations. Three distinct writing styles (narrator, commentator, poet) via style instructions in the prompt.
 
-<!-- Team Submissions: Please pick one member to publish the submission and credit teammates by listing their DEV usernames directly in the body of the post. -->
+- **Best Use of ElevenLabs**: Multilingual v2 model with deliberately tuned settings. Stability at 0.4 for emotional range (default sounds robotic for sports content). Style at 0.6 for expressiveness. Three voices paired to content types. The output sounds like broadcast commentary, not text-to-speech.
 
-<!-- Thanks for participating! -->
+---
+
+⭐ [Star the repo](https://github.com/simplynadaf/PassionCast) if you want to try it, and drop a comment with your team — I'll generate a clip for you.

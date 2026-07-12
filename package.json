@@ -8,12 +8,8 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "dependencies": {
-    "@elevenlabs/elevenlabs-js": "^2.57.0",
-    "@google/genai": "^1.0.0",
-    "elevenlabs": "^1.0.0"
-  },
   "devDependencies": {
+    "puppeteer-core": "^24.43.1",
     "vite": "^6.0.0"
   }
 }

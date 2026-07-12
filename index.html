@@ -3,8 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PassionCast — AI World Cup Hype Generator</title>
+  <title>PassionCast - AI World Cup Hype Generator</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>" />
+  <link rel="manifest" href="/PassionCast/manifest.json" />
+  <meta name="theme-color" content="#f59e0b" />
+  <meta name="description" content="AI-powered World Cup hype generator. Pick your team, get passionate audio commentary." />
+  <meta property="og:title" content="PassionCast - AI World Cup Hype Generator" />
+  <meta property="og:description" content="Pick your team. Choose your passion. Get AI-generated audio commentary that sounds like a real commentator losing their mind over YOUR team." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://simplynadaf.github.io/PassionCast/" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/src/styles.css" />
 </head>
@@ -26,6 +33,44 @@
 
     <!-- Main App -->
     <main class="main-container">
+      <!-- Sample Clips Section -->
+      <section class="step-section" id="step-samples">
+        <div class="step-header">
+          <span class="step-number">🎧</span>
+          <h2>Hear PassionCast in Action</h2>
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem; text-align: center; font-size: 1rem; max-width: 700px; margin-left: auto; margin-right: auto;">These sample clips were generated using Gemini + ElevenLabs. Hit play to hear what PassionCast sounds like - no API keys needed.</p>
+        <div class="samples-grid">
+          <div class="sample-card">
+            <img class="sample-flag" src="https://flagcdn.com/w80/ar.png" alt="Argentina" />
+            <div class="sample-info">
+              <span class="sample-title">Argentina - Rivalry Fire</span>
+              <span class="sample-voice">🎙️ Match Commentator</span>
+            </div>
+            <audio controls preload="none" src="/PassionCast/samples/argentina-rivalry-commentator.mp3"></audio>
+          </div>
+          <div class="sample-card">
+            <img class="sample-flag" src="https://flagcdn.com/w80/in.png" alt="India" />
+            <div class="sample-info">
+              <span class="sample-title">India - Pre-Match Hype</span>
+              <span class="sample-voice">🎙️ Epic Narrator</span>
+            </div>
+            <audio controls preload="none" src="/PassionCast/samples/india-hype-narrator.mp3"></audio>
+          </div>
+          <div class="sample-card">
+            <img class="sample-flag" src="https://flagcdn.com/w80/gb-eng.png" alt="England" />
+            <div class="sample-info">
+              <span class="sample-title">England - Beautiful Heartbreak</span>
+              <span class="sample-voice">🎙️ Epic Narrator</span>
+            </div>
+            <audio controls preload="none" src="/PassionCast/samples/england-heartbreak-narrator.mp3"></audio>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA between samples and team selection -->
+      <p style="color: var(--text-secondary); margin: 2rem auto; text-align: center; font-size: 1rem; max-width: 700px; margin-left: auto; margin-right: auto;">Want to create your own? Select your favourite team, pick your passion mode, choose a commentator voice, enter your Gemini and ElevenLabs API keys below, and generate your personal PassionCast.</p>
+
       <!-- Step 1: Team Selection -->
       <section class="step-section" id="step-team">
         <div class="step-header">
@@ -175,7 +220,7 @@
       <div class="modal-overlay"></div>
       <div class="modal-content">
         <h2>🔑 API Keys Required</h2>
-        <p>PassionCast uses Google AI and ElevenLabs APIs. Your keys stay in your browser — nothing is sent to any server except the official APIs.</p>
+        <p>PassionCast uses Google AI and ElevenLabs APIs. Your keys stay in your browser - nothing is sent to any server except the official APIs.</p>
         <div class="input-group">
           <label for="gemini-key">Google AI (Gemini) API Key</label>
           <input type="password" id="gemini-key" placeholder="AIza..." />
@@ -188,6 +233,9 @@
         </div>
         <button class="generate-btn" id="save-keys-btn">
           <span class="btn-text">Save & Continue</span>
+        </button>
+        <button class="cancel-btn" id="cancel-keys-btn">
+          <span class="btn-text">Cancel</span>
         </button>
         <p class="modal-note">Keys are stored in localStorage. Both services have free tiers.</p>
       </div>

@@ -169,6 +169,14 @@ body {
   line-height: 1;
 }
 
+.team-flag-img {
+  width: 48px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
 .team-name {
   font-size: 0.8rem;
   font-weight: 600;
@@ -565,6 +573,25 @@ audio {
   text-align: center;
 }
 
+.cancel-btn {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  margin-top: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background: var(--border);
+  color: var(--text-primary);
+}
+
 /* Utility */
 .hidden {
   display: none !important;
@@ -591,5 +618,71 @@ audio {
   
   .result-container {
     padding: 1.5rem 1rem;
+  }
+}
+
+/* Sample clips section */
+.samples-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sample-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  transition: border-color 0.2s;
+}
+
+.sample-card:hover {
+  border-color: var(--accent);
+}
+
+.sample-flag {
+  width: 48px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.sample-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 180px;
+}
+
+.sample-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.sample-voice {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.sample-card audio {
+  flex: 1;
+  height: 36px;
+  min-width: 200px;
+}
+
+@media (max-width: 600px) {
+  .sample-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .sample-card audio {
+    width: 100%;
   }
 }

@@ -2,3 +2,9 @@ node_modules
 dist
 .env
 .DS_Store
+demo.mp4
+RECORDING-GUIDE.md
+NOTES.md
+record-demo.js
+record-demo-samples.mjs
+take-screenshots.js

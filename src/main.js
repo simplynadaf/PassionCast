@@ -19,11 +19,6 @@ const hide = (el) => el.classList.add('hidden');
 function init() {
   renderTeams();
   setupEventListeners();
-  
-  // Check if API keys are set
-  if (!state.geminiKey || !state.elevenLabsKey) {
-    show($('api-modal'));
-  }
 }
 
 // Render team grid
@@ -31,7 +26,7 @@ function renderTeams() {
   const grid = $('team-grid');
   grid.innerHTML = TEAMS.map(team => `
     <button class="team-card" data-team="${team.code}">
-      <span class="team-flag">${team.flag}</span>
+      <img class="team-flag-img" src="https://flagcdn.com/w80/${team.flagCode}.png" alt="${team.name}" />
       <span class="team-name">${team.name}</span>
     </button>
   `).join('');
@@ -113,6 +108,11 @@ function setupEventListeners() {
     hide($('api-modal'));
   });
 
+  // Cancel API key modal — go back to previous state
+  $('cancel-keys-btn').addEventListener('click', () => {
+    hide($('api-modal'));
+  });
+
   // Download button
   $('download-btn')?.addEventListener('click', () => {
     const audio = $('audio-player');
@@ -190,7 +190,7 @@ async function generateScript() {
   
 ${modePrompt}
 
-TEAM: ${team.name} (${team.flag})
+TEAM: ${team.name}
 
 STYLE: ${voiceStyle}
 
@@ -222,7 +222,14 @@ RULES:
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
-    throw new Error(`Gemini API error: ${err.error?.message || response.statusText}`);
+    const msg = err.error?.message || response.statusText;
+    if (response.status === 429) {
+      throw new Error('Gemini API quota exceeded. Free tier resets daily. Try again tomorrow or check your billing at ai.google.dev');
+    }
+    if (response.status === 400) {
+      throw new Error('Gemini API key invalid. Check your key at aistudio.google.com/apikey');
+    }
+    throw new Error(`Gemini API error: ${msg}`);
   }
 
   const data = await response.json();
@@ -262,7 +269,17 @@ async function generateAudio(text) {
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
-    throw new Error(`ElevenLabs API error: ${err.detail?.message || err.detail?.status || response.statusText}`);
+    const msg = err.detail?.message || err.detail?.status || response.statusText;
+    if (response.status === 401) {
+      throw new Error('ElevenLabs API key invalid. Check your key at elevenlabs.io/app/settings/api-keys');
+    }
+    if (response.status === 402) {
+      throw new Error('This voice requires a paid ElevenLabs plan. Try a different voice style or upgrade at elevenlabs.io');
+    }
+    if (response.status === 429) {
+      throw new Error('ElevenLabs character limit reached. Free tier gives 10,000 chars/month. Resets monthly.');
+    }
+    throw new Error(`ElevenLabs API error: ${msg}`);
   }
 
   return await response.blob();
@@ -274,7 +291,7 @@ function showResult(script, audioBlob) {
   
   // Team badge
   $('result-team-badge').innerHTML = `
-    <span>${state.selectedTeam.flag}</span>
+    <img src="https://flagcdn.com/w80/${state.selectedTeam.flagCode}.png" alt="${state.selectedTeam.name}" style="width:64px;height:43px;object-fit:cover;border-radius:6px;" />
     <span style="font-size: 1rem; display: block; margin-top: 0.5rem; color: var(--text-secondary);">${state.selectedTeam.name}</span>
   `;
   
